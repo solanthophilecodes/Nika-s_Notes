@@ -2164,3 +2164,33 @@ function openArcNoteList(subject, chapter) {
 document.getElementById('arc-back-btn')?.addEventListener('click', goBack);
 document.getElementById('arc-ch-back-btn')?.addEventListener('click', goBack);
 document.getElementById('arc-nl-back-btn')?.addEventListener('click', goBack);
+// ============================================
+// MOBILE SIDEBAR TOGGLE — added for phone/APK use.
+// Purely additive: doesn't touch any existing nav/sidebar logic above.
+// ============================================
+(function () {
+  const toggleBtn = document.getElementById('mobile-menu-toggle');
+  const sidebar = document.getElementById('main-sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (!toggleBtn || !sidebar || !overlay) return;
+
+  function openSidebar() {
+    sidebar.classList.add('mobile-open');
+    overlay.classList.add('mobile-open');
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('mobile-open');
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    if (sidebar.classList.contains('mobile-open')) closeSidebar();
+    else openSidebar();
+  });
+  overlay.addEventListener('click', closeSidebar);
+
+  // Close the drawer after tapping a nav link, so it doesn't stay open
+  sidebar.querySelectorAll('.nav-link').forEach((link) => {
+    link.addEventListener('click', closeSidebar);
+  });
+})();
