@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nika's Notes</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#7a2540">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Nunito:wght@400;600;700&family=Caveat:wght@400;600&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="main-sidebar">
+            <div class="sidebar-top">
+                <div class="app-name">
+                    <span class="app-name-nika">Nika's</span>
+                    <span class="app-name-notes">Notes</span>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="#" class="nav-link active" data-nav="shelf">
+                        <span class="nav-icon">⬡</span>
+                        The Shelf
+                    </a>
+                    <a href="#" class="nav-link" data-nav="my-notes">
+                        <span class="nav-icon">◈</span>
+                        My Notes
+                    </a>
+                    <a href="#" class="nav-link" data-nav="archive">
+                        <span class="nav-icon">◇</span>
+                        Archive
+                    </a>
+                </nav>
+            </div>
+            <div class="sidebar-bottom">
+                <button class="sidebar-action-btn" id="btn-export-json">📤 Export</button>
+                <button class="sidebar-action-btn" id="btn-import-json">📥 Import</button>
+                <input type="file" id="import-file-input" accept=".json" style="display:none;">
+            </div>
+        </aside>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- PAGE: SHELF (default)                           -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <main class="shelf-room" id="page-shelf">
+            <div class="bookshelf-unit">
+                <div class="shelf-side left-panel"></div>
+                <div class="shelves-container">
+
+                    <!-- ROW 1 — DECORATION -->
+                    <div class="shelf-row shelf-row--deco">
+                        <div class="shelf-content shelf-content--deco">
+                            <div class="radhe-engraving">|| राधे राधे ||</div>
+                        </div>
+                        <div class="shelf-plank shelf-plank--deco">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ROW 2 — NOTE BUILDER -->
+                    <div class="shelf-row">
+                        <div class="row-label-above">Note Builder</div>
+                        <div class="shelf-content shelf-content--books-row">
+                            <div class="book b-deep-teal" id="book-note-builder" style="height:140px; transform:rotate(-1deg)">
+                                <div class="book-inner">
+                                    <div class="book-ornament top-ornament">✦ ❧ ✦</div>
+                                    <div class="book-title">Note Builder</div>
+                                    <div class="book-ornament bottom-ornament">— ❦ —</div>
+                                    <div class="book-pattern"></div>
+                                </div>
+                            </div>
+                            <!-- Dynamic subject books injected here -->
+                            <div id="shelf-subject-books" class="shelf-subject-books"></div>
+                        </div>
+                        <div class="shelf-plank">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ROW 3 — Brain Dump -->
+                    <div class="shelf-row shelf-row--tool">
+                        <div class="shelf-content shelf-content--single">
+                            <div class="book b-dusty-rose" style="height:140px; transform:rotate(-1.5deg)">
+                                <div class="book-inner">
+                                    <div class="book-ornament top-ornament">✦ ❧ ✦</div>
+                                    <div class="book-title">Brain Dump</div>
+                                    <div class="book-ornament bottom-ornament">— ❦ —</div>
+                                    <div class="book-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shelf-plank">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ROW 4 — Writer's Room -->
+                    <div class="shelf-row shelf-row--tool">
+                        <div class="shelf-content shelf-content--single">
+                            <div class="book b-sage-green" style="height:140px; transform:rotate(1deg)">
+                                <div class="book-inner">
+                                    <div class="book-ornament top-ornament">✾ ❧ ✾</div>
+                                    <div class="book-title">Writer's Room</div>
+                                    <div class="book-ornament bottom-ornament">— ❦ —</div>
+                                    <div class="book-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shelf-plank">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ROW 5 — Learn It -->
+                    <div class="shelf-row shelf-row--tool">
+                        <div class="shelf-content shelf-content--single">
+                            <div class="book b-burgundy" style="height:140px; transform:rotate(-2deg)">
+                                <div class="book-inner">
+                                    <div class="book-ornament top-ornament">❋ ❧ ❋</div>
+                                    <div class="book-title">Learn It</div>
+                                    <div class="book-ornament bottom-ornament">— ❦ —</div>
+                                    <div class="book-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shelf-plank">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ROW 6 — Deep Dive -->
+                    <div class="shelf-row shelf-row--tool">
+                        <div class="shelf-content shelf-content--single">
+                            <div class="book b-deep-teal" style="height:140px; transform:rotate(1.5deg)">
+                                <div class="book-inner">
+                                    <div class="book-ornament top-ornament">✦ ❧ ✦</div>
+                                    <div class="book-title">Deep Dive</div>
+                                    <div class="book-ornament bottom-ornament">— ❦ —</div>
+                                    <div class="book-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shelf-plank">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ROW 7 — Task Alchemist -->
+                    <div class="shelf-row shelf-row--tool">
+                        <div class="shelf-content shelf-content--single">
+                            <div class="book b-warm-tan" style="height:140px; transform:rotate(-1deg)">
+                                <div class="book-inner">
+                                    <div class="book-ornament top-ornament">✾ ❧ ✾</div>
+                                    <div class="book-title">Task Alchemist</div>
+                                    <div class="book-ornament bottom-ornament">— ❦ —</div>
+                                    <div class="book-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shelf-plank">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ROW 8 — Journal Coach -->
+                    <div class="shelf-row shelf-row--tool">
+                        <div class="shelf-content shelf-content--single">
+                            <div class="book b-muted-gold" style="height:140px; transform:rotate(2.5deg)">
+                                <div class="book-inner">
+                                    <div class="book-ornament top-ornament">❋ ❧ ❋</div>
+                                    <div class="book-title">Journal Coach</div>
+                                    <div class="book-ornament bottom-ornament">— ❦ —</div>
+                                    <div class="book-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shelf-plank">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ROW 9 — Idea Forge -->
+                    <div class="shelf-row shelf-row--tool">
+                        <div class="shelf-content shelf-content--single">
+                            <div class="book b-dusty-purple" style="height:140px; transform:rotate(-1.5deg)">
+                                <div class="book-inner">
+                                    <div class="book-ornament top-ornament">✦ ❧ ✦</div>
+                                    <div class="book-title">Idea Forge</div>
+                                    <div class="book-ornament bottom-ornament">— ❦ —</div>
+                                    <div class="book-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shelf-plank">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ROW 10 — File Whisperer -->
+                    <div class="shelf-row shelf-row--tool">
+                        <div class="shelf-content shelf-content--single">
+                            <div class="book b-antique-brown" style="height:140px; transform:rotate(1deg)">
+                                <div class="book-inner">
+                                    <div class="book-ornament top-ornament">✾ ❧ ✾</div>
+                                    <div class="book-title">File Whisperer</div>
+                                    <div class="book-ornament bottom-ornament">— ❦ —</div>
+                                    <div class="book-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shelf-plank">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ARCHIVE ROW -->
+                    <div class="shelf-row shelf-row--tool shelf-row--archive">
+                        <div class="shelf-content shelf-content--books-row">
+                            <div class="book b-antique-brown" style="height:130px; transform:rotate(-1deg); opacity:0.7;">
+                                <div class="book-inner">
+                                    <div class="book-ornament top-ornament">◈ ❧ ◈</div>
+                                    <div class="book-title">Archive</div>
+                                    <div class="book-ornament bottom-ornament">— ❦ —</div>
+                                    <div class="book-pattern"></div>
+                                </div>
+                            </div>
+                            <!-- Dynamic archived subject books -->
+                            <div id="shelf-archive-books" class="shelf-subject-books"></div>
+                        </div>
+                        <div class="shelf-plank shelf-plank--last">
+                            <div class="plank-fairy-lights">
+                                <svg class="fairy-string-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path class="fairy-string-path" d=""/></svg>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                                <div class="plank-bulb"></div><div class="plank-bulb"></div>
+                            </div>
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- CARS ROW -->
+                    <div class="shelf-row shelf-row--cars">
+                        <div class="shelf-content"></div>
+                        <div class="shelf-plank shelf-plank--last">
+                            <div class="plank-grain"></div>
+                            <div class="plank-shadow"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="shelf-side right-panel"></div>
+            </div>
+        </main>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- PAGE: NOTE BUILDER                              -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <main class="page-content note-builder-page hidden" id="page-note-builder">
+            <div class="note-builder-bg" id="nb-bg"></div>
+            <div class="note-builder-content">
+            <div class="pg-header no-print">
+                <button class="back-btn" id="nb-back-btn">← Back</button>
+                <h1 class="pg-title">✦ Note Builder</h1>
+                <button class="nb-sticker-fab" id="nb-sticker-fab" title="Add sticker">🎨</button>
+            </div>
+            <div class="nb-notebook" id="nb-notebook-themed">
+                <div class="nb-margin-line"></div>
+                <div class="nb-form">
+
+                    <!-- CHARACTER SELECTOR -->
+                    <div class="nb-field-group">
+                        <label class="nb-label">Character Theme</label>
+                        <div class="nb-char-selector" id="nb-char-selector">
+                            <div class="nb-char-card" data-char="deku">
+                                <div class="nb-char-icon">💚</div>
+                                <div class="nb-char-name">Deku</div>
+                                <div class="nb-char-sub">Cream · Sage</div>
+                            </div>
+                            <div class="nb-char-card" data-char="katsuki">
+                                <div class="nb-char-icon">💥</div>
+                                <div class="nb-char-name">Katsuki</div>
+                                <div class="nb-char-sub">Charcoal · Orange</div>
+                            </div>
+                            <div class="nb-char-card" data-char="shoto">
+                                <div class="nb-char-icon">🧸</div>
+                                <div class="nb-char-name">Shoto</div>
+                                <div class="nb-char-sub">White · Split</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TITLE -->
+                    <div class="nb-field-group">
+                        <label class="nb-label">Note Title</label>
+                        <input type="text" id="nb-title" class="nb-input" placeholder="e.g. Pointers Deep Dive…" autocomplete="off">
+                    </div>
+
+                    <!-- SUBJECT -->
+                    <div class="nb-field-group">
+                        <label class="nb-label">Subject</label>
+                        <div class="nb-combo">
+                            <input type="text" id="nb-subject" class="nb-input" placeholder="e.g. C++, DBMS, Maths…" autocomplete="off">
+                            <div class="nb-dropdown" id="nb-subject-dropdown"></div>
+                        </div>
+                    </div>
+
+                    <!-- CHAPTER -->
+                    <div class="nb-field-group">
+                        <label class="nb-label">Chapter</label>
+                        <div class="nb-combo">
+                            <input type="text" id="nb-chapter" class="nb-input" placeholder="e.g. Chapter 1, Pointers…" autocomplete="off">
+                            <div class="nb-dropdown" id="nb-chapter-dropdown"></div>
+                        </div>
+                    </div>
+
+                    <!-- TOPICS -->
+                    <div class="nb-field-group">
+                        <label class="nb-label">Topics</label>
+                        <div id="nb-topics-container"></div>
+                        <button class="nb-add-topic-btn" id="nb-add-topic-btn">＋ Add Topic</button>
+                    </div>
+
+                    <div class="nb-save-row">
+                        <button class="nb-save-btn" id="nb-save-btn">✦ Save Note</button>
+                    </div>
+                </div>
+            </div>
+            </div><!-- /.note-builder-content -->
+        </main>
+
+        <!-- SHARED STICKER PICKER PANEL -->
+        <div class="sticker-picker-panel" id="sticker-picker-panel">
+            <div class="sticker-picker-title">✦ Pick a sticker</div>
+            <div class="sticker-picker-grid">
+                <img class="sticker-option" src="stickers/deku.png"    data-char="deku"    alt="Deku">
+                <img class="sticker-option" src="stickers/katsuki.png" data-char="katsuki" alt="Katsuki">
+                <img class="sticker-option" src="stickers/shoto.png"   data-char="shoto"   alt="Shoto">
+            </div>
+            <button class="sticker-picker-close" id="sticker-picker-close">✕</button>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- PAGE: MY NOTES — Subject cards                  -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <main class="page-content hidden" id="page-my-notes">
+            <div class="pg-header no-print">
+                <button class="back-btn" id="mn-back-btn">← Back</button>
+                <h1 class="pg-title">✦ My Notes</h1>
+                <div></div>
+            </div>
+            <div class="mn-subjects-grid" id="mn-subjects-grid"></div>
+        </main>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- PAGE: CHAPTER TABLE OF CONTENTS                 -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <main class="page-content hidden" id="page-chapters">
+            <div class="pg-header no-print">
+                <button class="back-btn" id="ch-back-btn">← Back</button>
+                <h1 class="pg-title" id="ch-title">📚 Subject</h1>
+                <div></div>
+            </div>
+            <div class="nb-notebook">
+                <div class="nb-margin-line"></div>
+                <div class="ch-toc-wrapper">
+                    <div class="ch-toc-label">TABLE OF CONTENTS</div>
+                    <div class="ch-toc-rule"></div>
+                    <div class="ch-toc" id="ch-toc"></div>
+                    <div class="ch-toc-rule"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- PAGE: NOTE LIST inside a chapter                -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <main class="page-content hidden" id="page-note-list">
+            <div class="pg-header no-print">
+                <button class="back-btn" id="nl-back-btn">← Back</button>
+                <h1 class="pg-title" id="nl-title">Notes</h1>
+                <div></div>
+            </div>
+            <div class="nb-notebook">
+                <div class="nb-margin-line"></div>
+                <div class="nl-list" id="nl-list"></div>
+            </div>
+        </main>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- PAGE: NOTE VIEW                                  -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <main class="page-content hidden" id="page-note-view">
+            <div class="pg-header no-print">
+                <button class="back-btn" id="nv-back-btn">← Back</button>
+                <h1 class="pg-title" id="nv-pg-title">Note</h1>
+                <div class="nv-actions">
+                    <div class="nv-fab-wrap" id="nv-fab-wrap">
+                        <button class="nv-fab" id="nv-fab-btn" title="Actions">💚</button>
+                        <div class="nv-dropdown" id="nv-dropdown">
+                            <button class="nv-drop-item nv-drop--edit" id="nv-edit-btn">✎ Edit</button>
+                            <button class="nv-drop-item nv-drop--archive" id="nv-archive-btn">◈ Archive</button>
+                            <button class="nv-drop-item nv-drop--unarchive" id="nv-unarchive-btn" style="display:none">↩ Unarchive</button>
+                            <button class="nv-drop-item nv-drop--delete" id="nv-delete-btn">✕ Delete</button>
+                            <button class="nv-drop-item nv-drop--print" id="nv-print-btn">+ PDF</button>
+                            <button class="nv-drop-item nv-drop--sticker" id="nv-sticker-fab">🎨 Stickers</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="nb-notebook">
+                <div class="nb-margin-line"></div>
+                <div class="nv-body" id="nv-body"></div>
+            </div>
+            <div class="print-footer">Nika's Notes ✦</div>
+        </main>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- PAGE: ARCHIVE — Subject cards                   -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <main class="page-content hidden" id="page-archive">
+            <div class="pg-header no-print">
+                <button class="back-btn" id="arc-back-btn">← Back</button>
+                <h1 class="pg-title">◈ Archive</h1>
+                <div></div>
+            </div>
+            <div class="mn-subjects-grid" id="arc-subjects-grid"></div>
+        </main>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- PAGE: ARCHIVE — Chapter Table of Contents       -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <main class="page-content hidden" id="page-arc-chapters">
+            <div class="pg-header no-print">
+                <button class="back-btn" id="arc-ch-back-btn">← Back</button>
+                <h1 class="pg-title" id="arc-ch-title">📚 Subject</h1>
+                <div></div>
+            </div>
+            <div class="nb-notebook">
+                <div class="nb-margin-line"></div>
+                <div class="ch-toc-wrapper">
+                    <div class="ch-toc-label">TABLE OF CONTENTS</div>
+                    <div class="ch-toc-rule"></div>
+                    <div class="ch-toc" id="arc-ch-toc"></div>
+                    <div class="ch-toc-rule"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- PAGE: ARCHIVE — Note list in chapter            -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <main class="page-content hidden" id="page-arc-note-list">
+            <div class="pg-header no-print">
+                <button class="back-btn" id="arc-nl-back-btn">← Back</button>
+                <h1 class="pg-title" id="arc-nl-title">Notes</h1>
+                <div></div>
+            </div>
+            <div class="nb-notebook">
+                <div class="nb-margin-line"></div>
+                <div class="nl-list" id="arc-nl-list"></div>
+            </div>
+        </main>
+
+    </div>
+    <script src="app.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('service-worker.js').catch(err => {
+            console.warn('Service worker registration failed:', err);
+          });
+        });
+      }
+    </script>
+</body>
+</html>
