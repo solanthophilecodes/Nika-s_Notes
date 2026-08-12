@@ -598,8 +598,8 @@ body {
     align-items: flex-end;
     justify-content: flex-start;
     padding: 8px 0 0 20px;
-    flex: 1;
-    min-height: 0;
+    flex: 1 1 auto;
+    min-height: auto;
     position: relative;
     gap: 6px;
     flex-wrap: wrap;

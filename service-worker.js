@@ -1,7 +1,7 @@
 // Nika's Notes — offline service worker
 // Bump this version any time you update app.js / style.css / index.html
 // so phones pick up the new files instead of the stale cache.
-const CACHE_VERSION = 'nikas-notes-v4';
+const CACHE_VERSION = 'nikas-notes-v5';
 
 const APP_SHELL = [
   './',
