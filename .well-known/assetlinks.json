@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.solanthophilecodes.twa",
+        "sha256_cert_fingerprints": ["9F:3E:B9:28:BA:26:B6:E5:80:FC:5F:5D:21:2C:B5:98:A0:8C:C1:B1:2F:0A:86:E7:42:69:6D:E3:4B:0E:52:DB"]
+      }
+    }]
