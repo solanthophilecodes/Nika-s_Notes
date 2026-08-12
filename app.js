@@ -2194,3 +2194,17 @@ document.getElementById('arc-nl-back-btn')?.addEventListener('click', goBack);
     link.addEventListener('click', closeSidebar);
   });
 })();
+
+// ============================================
+// GLOBAL REFRESH HELPER — for sync.js to call after cloud updates.
+// Purely additive: just re-runs your existing render functions.
+// ============================================
+window.refreshAllViews = function () {
+  try { renderShelfSubjectBooks(); } catch (e) { console.warn(e); }
+  try { renderShelfArchiveBooks(); } catch (e) { console.warn(e); }
+  try { renderMyNotes(); } catch (e) { console.warn(e); }
+  try { renderArchive(); } catch (e) { console.warn(e); }
+};
+
+// Expose Store globally so the separate sync.js module can call it
+window.Store = Store;

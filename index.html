@@ -42,11 +42,24 @@
                 </nav>
             </div>
             <div class="sidebar-bottom">
+                <div class="sync-status" id="sync-status">Not signed in — local only</div>
                 <button class="sidebar-action-btn" id="btn-export-json">📤 Export</button>
                 <button class="sidebar-action-btn" id="btn-import-json">📥 Import</button>
+                <button class="sidebar-action-btn hidden" id="btn-sync-signin">☁️ Sign in to sync</button>
+                <button class="sidebar-action-btn hidden" id="btn-sync-signout">🔓 Sign out</button>
                 <input type="file" id="import-file-input" accept=".json" style="display:none;">
             </div>
         </aside>
+
+        <!-- SYNC SIGN-IN GATE (blocks nothing by default — dismissible) -->
+        <div class="sync-gate hidden" id="sync-gate">
+            <div class="sync-gate-box">
+                <div class="sync-gate-title">Sync your notes ✦</div>
+                <p class="sync-gate-text">Sign in with Google so your notes stay the same on every device.</p>
+                <button class="sync-gate-signin-btn" id="sync-signin-btn">Sign in with Google</button>
+                <button class="sync-gate-skip-btn" id="sync-skip-btn">Continue without syncing</button>
+            </div>
+        </div>
 
         <!-- ═══════════════════════════════════════════════ -->
         <!-- PAGE: SHELF (default)                           -->
@@ -580,6 +593,7 @@
 
     </div>
     <script src="app.js"></script>
+    <script type="module" src="sync.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
