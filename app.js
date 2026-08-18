@@ -113,6 +113,82 @@ const Store = {
         subjects = subjects.filter(s => s !== subject);
         Store.saveSubjects(subjects);
     },
+    archiveSubject(subject) {
+        // Archive every active note under this subject (per-note archive
+        // logic already cleans up the active chapter/subject indices).
+        const chapters = Store.getChapters(subject);
+        chapters.forEach(chapter => {
+            const ids = Store.getNoteIds(subject, chapter).slice();
+            ids.forEach(id => Store.archiveNote(id));
+        });
+    },
+
+    // ── Recently Deleted (whole-book soft delete) ───────────────────
+    getRecentlyDeleted() {
+        try { return JSON.parse(localStorage.getItem('recentlyDeletedBooks') || '[]'); }
+        catch { return []; }
+    },
+    saveRecentlyDeleted(arr) {
+        localStorage.setItem('recentlyDeletedBooks', JSON.stringify(arr));
+    },
+    softDeleteSubject(subject) {
+        const notes = [];
+        const chapters = Store.getChapters(subject);
+        chapters.forEach(chapter => {
+            Store.getNoteIds(subject, chapter).forEach(id => {
+                const note = Store.getNote(id);
+                if (note) notes.push(note);
+            });
+        });
+        const archChapters = Store.getArchivedChapters(subject);
+        archChapters.forEach(chapter => {
+            Store.getArchivedNoteIds(subject, chapter).forEach(id => {
+                const note = Store.getNote(id);
+                if (note) notes.push(note);
+            });
+        });
+
+        const entry = {
+            id: 'del_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+            subject,
+            deletedAt: Date.now(),
+            notes,
+        };
+
+        notes.forEach(note => localStorage.removeItem(`note_${note.id}`));
+        chapters.forEach(chapter => localStorage.removeItem(`notes_${subject}_${chapter}`));
+        localStorage.removeItem(`subject_${subject}`);
+        let subjects = Store.getSubjects();
+        subjects = subjects.filter(s => s !== subject);
+        Store.saveSubjects(subjects);
+
+        const deleted = Store.getRecentlyDeleted();
+        deleted.unshift(entry);
+        Store.saveRecentlyDeleted(deleted);
+        return entry;
+    },
+    restoreDeletedBook(entryId) {
+        const deleted = Store.getRecentlyDeleted();
+        const idx = deleted.findIndex(e => e.id === entryId);
+        if (idx === -1) return;
+        const entry = deleted[idx];
+        entry.notes.forEach(note => {
+            Store.saveNote(note);
+            if (!note.archived) Store.addNoteToIndex(note);
+        });
+        deleted.splice(idx, 1);
+        Store.saveRecentlyDeleted(deleted);
+    },
+    permanentlyDeleteBook(entryId) {
+        const deleted = Store.getRecentlyDeleted();
+        Store.saveRecentlyDeleted(deleted.filter(e => e.id !== entryId));
+    },
+    purgeOldDeleted(days = 30) {
+        const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+        const deleted = Store.getRecentlyDeleted();
+        const kept = deleted.filter(e => e.deletedAt > cutoff);
+        if (kept.length !== deleted.length) Store.saveRecentlyDeleted(kept);
+    },
     addNoteToIndex(note) {
         let subjects = Store.getSubjects();
         if (!subjects.includes(note.subject)) {
@@ -213,6 +289,7 @@ const pages = {
     'note-list':    document.getElementById('page-note-list'),
     'note-view':    document.getElementById('page-note-view'),
     'archive':      document.getElementById('page-archive'),
+    'recently-deleted': document.getElementById('page-recently-deleted'),
     'arc-chapters': document.getElementById('page-arc-chapters'),
     'arc-note-list':document.getElementById('page-arc-note-list'),
 };
@@ -263,6 +340,9 @@ document.querySelectorAll('.nav-link').forEach(link => {
         } else if (target === 'archive') {
             renderArchive();
             showPage('archive');
+        } else if (target === 'recently-deleted') {
+            renderRecentlyDeleted();
+            showPage('recently-deleted');
         }
     });
 });
@@ -302,19 +382,69 @@ function renderShelfSubjectBooks() {
                 <div class="book-ornament bottom-ornament">— ❦ —</div>
                 <div class="book-pattern"></div>
             </div>
-            <button class="book-delete-btn" title="Delete this book" aria-label="Delete ${escapeHtml(subject)}">✕</button>
+            <button class="book-menu-btn" title="Options" aria-label="Options for ${escapeHtml(subject)}">⋮</button>
+            <div class="book-menu-popup">
+                <button class="book-menu-item book-menu-item--archive">◈ Archive</button>
+                <button class="book-menu-item book-menu-item--delete">✕ Delete</button>
+            </div>
         `;
-        book.addEventListener('click', () => {
+        book.addEventListener('click', (e) => {
+            if (book.classList.contains('menu-open')) return;
             openChapterIndex(subject);
         });
-        const deleteBtn = book.querySelector('.book-delete-btn');
-        deleteBtn.addEventListener('click', (e) => {
+
+        const menuBtn = book.querySelector('.book-menu-btn');
+        const archiveItem = book.querySelector('.book-menu-item--archive');
+        const deleteItem = book.querySelector('.book-menu-item--delete');
+
+        const closeAllMenus = () => {
+            document.querySelectorAll('.book.menu-open').forEach(b => b.classList.remove('menu-open'));
+        };
+        const toggleMenu = () => {
+            const wasOpen = book.classList.contains('menu-open');
+            closeAllMenus();
+            if (!wasOpen) book.classList.add('menu-open');
+        };
+
+        menuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const sure = confirm(`Delete "${subject}" and everything inside it? This can't be undone.`);
-            if (!sure) return;
-            Store.deleteSubject(subject);
-            renderShelfSubjectBooks();
+            toggleMenu();
         });
+
+        archiveItem.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllMenus();
+            const sure = confirm(`Archive "${subject}"? It'll move to your Archive shelf.`);
+            if (!sure) return;
+            Store.archiveSubject(subject);
+            renderShelfSubjectBooks();
+            renderShelfArchiveBooks();
+        });
+
+        deleteItem.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllMenus();
+            Store.softDeleteSubject(subject);
+            renderShelfSubjectBooks();
+            toast(`"${subject}" moved to Recently Deleted`);
+        });
+
+        // Long-press to open menu on mobile/touch
+        let pressTimer = null;
+        let longPressFired = false;
+        book.addEventListener('touchstart', () => {
+            longPressFired = false;
+            pressTimer = setTimeout(() => {
+                longPressFired = true;
+                toggleMenu();
+            }, 500);
+        }, { passive: true });
+        const cancelPress = () => { if (pressTimer) clearTimeout(pressTimer); };
+        book.addEventListener('touchend', (e) => {
+            cancelPress();
+            if (longPressFired) e.preventDefault();
+        });
+        book.addEventListener('touchmove', cancelPress);
         container.appendChild(book);
     });
 }
@@ -2064,6 +2194,22 @@ function escapeAttr(str) {
     return String(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+function toast(message) {
+    let el = document.getElementById('nn-toast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'nn-toast';
+        el.className = 'nn-toast';
+        document.body.appendChild(el);
+    }
+    el.textContent = message;
+    el.classList.remove('nn-toast--show');
+    void el.offsetWidth; // restart animation if toast fires again quickly
+    el.classList.add('nn-toast--show');
+    clearTimeout(el._hideTimer);
+    el._hideTimer = setTimeout(() => el.classList.remove('nn-toast--show'), 3200);
+}
+
 
 // ============================================================
 // ARCHIVE PAGE
@@ -2093,6 +2239,49 @@ function renderArchive() {
             <div class="mn-subject-count">${chapters.length} chapter${chapters.length !== 1 ? 's' : ''} · ${totalNotes} note${totalNotes !== 1 ? 's' : ''}</div>
         `;
         card.addEventListener('click', () => openArcChapterIndex(subject));
+        grid.appendChild(card);
+    });
+}
+
+function renderRecentlyDeleted() {
+    const grid = document.getElementById('rd-subjects-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    const deleted = Store.getRecentlyDeleted();
+
+    if (deleted.length === 0) {
+        grid.innerHTML = '<div class="mn-empty">Nothing here ✦</div>';
+        return;
+    }
+
+    deleted.forEach(entry => {
+        const daysLeft = Math.max(0, 30 - Math.floor((Date.now() - entry.deletedAt) / (24 * 60 * 60 * 1000)));
+        const card = document.createElement('div');
+        card.className = 'mn-subject-card rd-subject-card';
+        card.innerHTML = `
+            <span class="mn-subject-icon">🗑</span>
+            <div class="mn-subject-name">${escapeHtml(entry.subject)}</div>
+            <div class="mn-subject-count">${entry.notes.length} note${entry.notes.length !== 1 ? 's' : ''} · ${daysLeft} day${daysLeft !== 1 ? 's' : ''} left</div>
+            <div class="rd-card-actions">
+                <button class="rd-restore-btn">↺ Restore</button>
+                <button class="rd-forever-btn">Delete Forever</button>
+            </div>
+        `;
+        card.querySelector('.rd-restore-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            Store.restoreDeletedBook(entry.id);
+            renderRecentlyDeleted();
+            renderShelfSubjectBooks();
+            renderShelfArchiveBooks();
+            toast(`"${entry.subject}" restored`);
+        });
+        card.querySelector('.rd-forever-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const sure = confirm(`Permanently delete "${entry.subject}"? This can't be undone.`);
+            if (!sure) return;
+            Store.permanentlyDeleteBook(entry.id);
+            renderRecentlyDeleted();
+        });
         grid.appendChild(card);
     });
 }
@@ -2162,6 +2351,7 @@ function openArcNoteList(subject, chapter) {
 
 // Back buttons for archive sub-pages
 document.getElementById('arc-back-btn')?.addEventListener('click', goBack);
+document.getElementById('rd-back-btn')?.addEventListener('click', goBack);
 document.getElementById('arc-ch-back-btn')?.addEventListener('click', goBack);
 document.getElementById('arc-nl-back-btn')?.addEventListener('click', goBack);
 // ============================================
@@ -2208,3 +2398,11 @@ window.refreshAllViews = function () {
 
 // Expose Store globally so the separate sync.js module can call it
 window.Store = Store;
+
+// Purge Recently Deleted entries older than 30 days
+try { Store.purgeOldDeleted(30); } catch (e) { console.warn(e); }
+
+// Click anywhere outside an open book menu popup to close it
+document.addEventListener('click', () => {
+    document.querySelectorAll('.book.menu-open').forEach(b => b.classList.remove('menu-open'));
+});
