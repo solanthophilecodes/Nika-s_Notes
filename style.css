@@ -3054,6 +3054,21 @@ body {
     .shelf-content {
         padding-left: 8px;
     }
+
+    /* Keep Note Builder flush with subject books on one line instead of
+       wrapping (wrapping was pushing Note Builder onto its own row, away
+       from the plank). Scroll sideways instead. */
+    .shelf-content--books-row {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        padding-right: 20px;
+    }
+
+    .shelf-subject-books {
+        flex-wrap: nowrap;
+    }
 }
 
 
